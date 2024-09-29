@@ -25,11 +25,8 @@ FROM eclipse-temurin:21-jdk-alpine
 # Set the working directory for the runtime
 WORKDIR /app
 
-# Copy the built JAR file from the build stage
-COPY --from=build /app/target/myapp.jar ./myapp.jar
-
 # Expose any necessary ports (if required)
 EXPOSE 8080
 
 # Default command to run the application
-CMD ["java", "-jar", "myapp.jar"]
+CMD ["java", "-jar", "target/hexlet-java-tg-bot-2-1.0-SNAPSHOT.jar"]
