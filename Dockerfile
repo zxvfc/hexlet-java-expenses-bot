@@ -1,32 +1,27 @@
-# Stage 1: Use an official JDK 21 image to build the project
-FROM eclipse-temurin:21-jdk AS build
-
-# Install Maven manually
-RUN apt-get update && apt-get install -y maven
+# Use an official Maven image to build the project, with OpenJDK 21
+FROM maven:3.8.6-openjdk-21-slim AS build
 
 # Set the working directory inside the container
 WORKDIR /app
 
-# Copy the pom.xml and download dependencies (for layer caching)
+# Copy the pom.xml and source code
 COPY pom.xml .
-
-# Download dependencies
-RUN mvn dependency:go-offline -B
-
-# Copy the rest of the project
 COPY src ./src
 
-# Build the project (this will create the JAR file)
-RUN mvn clean package -DskipTests
+# Build the project (this will generate the JAR)
+RUN mvn clean package
 
-# Stage 2: Use a lightweight JDK 21 image to run the app
-FROM eclipse-temurin:21-jdk-alpine
+# Use a smaller base image for the runtime
+FROM openjdk:21-slim
 
 # Set the working directory for the runtime
 WORKDIR /app
 
+# Copy the built JAR file from the build stage
+COPY --from=build /app/target/hexlet-java-tg-bot-2-1.0-SNAPSHOT.jar ./hexlet-java-tg-bot-2-1.0-SNAPSHOT.jar
+
 # Expose any necessary ports (if required)
 EXPOSE 8080
 
-# Default command to run the application
-CMD ["java", "-jar", "target/hexlet-java-tg-bot-2-1.0-SNAPSHOT.jar"]
+# Run the built JAR
+CMD ["java", "-jar", "hexlet-java-tg-bot-2-1.0-SNAPSHOT.jar"]
