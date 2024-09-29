@@ -1,18 +1,18 @@
-# Use an official Maven image to build the project, with OpenJDK 21
-FROM maven:3.8.6-openjdk-21-slim AS build
+# Use OpenJDK 21 as the base image
+FROM openjdk:21-slim AS build
 
-# Set the working directory inside the container
+# Install Maven
+RUN apt-get update && apt-get install -y maven
+
+# Set the working directory
 WORKDIR /app
 
 # Copy the pom.xml and source code
 COPY pom.xml .
 COPY src ./src
 
-# Build the project (this will generate the JAR)
+# Build the project
 RUN mvn clean package
-
-# Use a smaller base image for the runtime
-FROM openjdk:21-slim
 
 # Set the working directory for the runtime
 WORKDIR /app
@@ -20,7 +20,7 @@ WORKDIR /app
 # Copy the built JAR file from the build stage
 COPY --from=build /app/target/hexlet-java-tg-bot-2-1.0-SNAPSHOT.jar ./hexlet-java-tg-bot-2-1.0-SNAPSHOT.jar
 
-# Expose any necessary ports (if required)
+# Expose any necessary ports
 EXPOSE 8080
 
 # Run the built JAR
