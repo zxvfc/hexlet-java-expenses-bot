@@ -12,16 +12,13 @@ COPY pom.xml .
 COPY src ./src
 
 # Build the project
-RUN mvn clean package
+RUN mvn clean package && ls -l /app/target
 
 # Set the working directory for the runtime
 WORKDIR /app
-
-# Copy the built JAR file from the build stage
-COPY --from=build /app/target/hexlet-java-tg-bot-2-1.0-SNAPSHOT.jar ./hexlet-java-tg-bot-2-1.0-SNAPSHOT.jar
 
 # Expose any necessary ports
 EXPOSE 8080
 
 # Run the built JAR
-CMD ["java", "-jar", "hexlet-java-tg-bot-2-1.0-SNAPSHOT.jar"]
+CMD ["java", "-jar", "target/hexlet-java-tg-bot-2-1.0-SNAPSHOT.jar"]
