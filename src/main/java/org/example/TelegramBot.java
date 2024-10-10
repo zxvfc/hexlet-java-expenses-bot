@@ -55,7 +55,7 @@ public class TelegramBot extends TelegramLongPollingBot {
         sendMessage.setChatId(chatId);
         sendMessage.setText(text);
         List<String> buttonsWithCancel = new ArrayList<>(buttons);
-        if (!state.equals(IDLE_STATE)) {
+    if (!state.equals(IDLE_STATE)) {
             buttonsWithCancel.add(CANCEL_BUTTON);
         }
         sendMessage.setReplyMarkup(buildKeyboard(buttonsWithCancel));
@@ -184,7 +184,7 @@ public class TelegramBot extends TelegramLongPollingBot {
         ChatState currentChatState = CHATS_STATES.get(chatId);
 
         String text = message.getText();
-        System.out.println(text);
+        System.out.println(message.getFrom().getUserName() + ": '" + text + "'");
         if (text.equals(CANCEL_BUTTON)) {
             changeState(
                     IDLE_STATE,
