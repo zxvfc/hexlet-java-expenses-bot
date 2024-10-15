@@ -69,13 +69,13 @@ public class TelegramBot extends TelegramLongPollingBot {
 
     private static ReplyKeyboard buildKeyboard(List<String> btns) {
         if (btns == null || btns.isEmpty()) return new ReplyKeyboardRemove(true);
-        var rows = new ArrayList<KeyboardRow>();
-        for (var btn : btns) {
+        List<KeyboardRow> rows = new ArrayList<>();
+        for (String btn : btns) {
             KeyboardRow row = new KeyboardRow();
             row.add(btn);
             rows.add(row);
         }
-        var markup = new ReplyKeyboardMarkup();
+        ReplyKeyboardMarkup markup = new ReplyKeyboardMarkup();
         markup.setKeyboard(rows);
         return markup;
     }
@@ -213,6 +213,7 @@ public class TelegramBot extends TelegramLongPollingBot {
 
     @Override
     public String getBotToken() {
+        // Получение токена для бота из переменных окружения.
         return System.getenv("TG_BOT_TOKEN");
     }
 }
@@ -243,7 +244,13 @@ class ChatState {
         if (expensesPerCategory.isEmpty()) return "No expenses to show";
         return expensesPerCategory.entrySet()
                 .stream()
-                .map(expense -> expense.getValue().stream().map(it -> expense.getKey() + ": " + it).collect(Collectors.joining("\n")))
+                .map(expense -> getFormattedExpenses(expense.getKey(),expense.getValue()))
                 .collect(Collectors.joining("\n------------\n"));
+    }
+
+    String getFormattedExpenses(String category, List<Integer> expenses) {
+        return expenses.stream()
+                .map(it -> category + ": " + it)
+                .collect(Collectors.joining("\n"));
     }
 }
